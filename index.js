@@ -1,16 +1,20 @@
-var express = require('express');
-var app = express();
-var port = process.env.PORT || 3000;
+var express = require('express'),
+    app = express(),
+    port = process.env.PORT || 3000;
+var server = app.listen(port, function() {
+        console.log('Listening on port ' + port)
+        });
+var io = require('socket.io')(server);
+var favicon = require('serve-favicon'),
+    path = require('path');
+app.use(favicon(path.join(__dirname,'public','images','favicon.gif')));
 
 app.get('/', function(req, res) {
    res.sendFile(__dirname + '/index.html') 
 });
 
-var server = app.listen(port, function() {
-    console.log('Listening on port ' + port)
-});
 
-var io = require('socket.io')(server);
+
 io.on('connection', function(socket) {
     console.log('A user has connected!');
     

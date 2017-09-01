@@ -2,45 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.1/socket.io.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script
       src="https://code.jquery.com/jquery-3.2.1.min.js"
       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
       crossorigin="anonymous"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <title>NodeJS/Express Chat Room Application</title>
 </head>
 <body>
-    <div class="messages">Hello World!
-    <ul id="message-list"></ul>
-    </div>
+    <div id="messages" class="col-md-12 panel panel-body"></div>
     <div class="composing-area">
     <input id="composing-box">
     </div>
-    <div class="footer">
+    <div class="panel-footer">
     <button id="post-button">Post</button></div>
     <script>
         var socket = io();
         $(function () {
+            var $composingBox = $('#composing-box');
+
             $('#post-button').on('click', function () {
                 postMessage();
             })
-            $('#composing-box').keypress(function(e) {
+            $composingBox.keypress(function(e) {
                 if(e.which == 13) { //Pressed enter
                     postMessage();
                 }
             })
             
-            socket.on('addMessage', function(message) {
+            socket.on('addMessage', function(data) {
                console.log(this);
-                $('#message-list').append($('<li>').text(message));
+                $('#messages').append($('<div>').text(data.message).addClass('message'));
             });
             function postMessage() {
-                var message = $('#composing-box').val().trim();
+                var message = $composingBox.val().trim();
                 if(!message) {
                     return false;
                 }
                 socket.emit('postMessageToServer', message);
-                $('#composing-box').val('').focus();
+                $composingBox.val('').focus();
                 return false;
             }
             
