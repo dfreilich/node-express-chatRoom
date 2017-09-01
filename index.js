@@ -1,10 +1,21 @@
-var express = require('express')
-var app = express()
+var express = require('express');
+var app = express();
+var port = process.env.PORT || 3000;
 
-app.get('/',function(req, res) {
-    res.send('What\'s up, doc?')
-})
+app.get('/', function(req, res) {
+   res.sendFile(__dirname + '/index.html') 
+});
 
-app.listen(8080, function() {
-    console.log('Magic is happening at localhost:8080')
-})
+var server = app.listen(port, function() {
+    console.log('Listening on port ' + port)
+});
+
+var io = require('socket.io')(server);
+io.on('connection', function(socket) {
+    console.log('A user has connected!');
+    
+    socket.on('postMessageToServer', function(message) {
+        console.log('Message received in server: ' + message);
+       io.emit('addMessage', {message: message, id: socket.id}); //At some point, with user who submitted? 
+    });
+});

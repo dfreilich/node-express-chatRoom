@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.1/socket.io.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"></script>
+    <title>NodeJS/Express Chat Room Application</title>
+</head>
+<body>
+    <div class="messages">Hello World!
+    <ul id="message-list"></ul>
+    </div>
+    <div class="composing-area">
+    <input id="composing-box">
+    </div>
+    <div class="footer">
+    <button id="post-button">Post</button></div>
+    <script>
+        var socket = io();
+        $(function () {
+            $('#post-button').on('click', function () {
+                postMessage();
+            })
+            $('#composing-box').keypress(function(e) {
+                if(e.which == 13) { //Pressed enter
+                    postMessage();
+                }
+            })
+            
+            socket.on('addMessage', function(message) {
+               console.log(this);
+                $('#message-list').append($('<li>').text(message));
+            });
+            function postMessage() {
+                var message = $('#composing-box').val().trim();
+                if(!message) {
+                    return false;
+                }
+                socket.emit('postMessageToServer', message);
+                $('#composing-box').val('').focus();
+                return false;
+            }
+            
+        });
+    </script>
+</body>
+</html>
