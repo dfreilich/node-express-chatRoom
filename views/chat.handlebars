@@ -1,0 +1,36 @@
+    <div id="messages" class="col-md-12 panel panel-body"></div>
+    <div class="composing-area">
+    <input id="composing-box">
+    </div>
+    <div class="panel-footer">
+    <button id="post-button">Post</button></div>
+    <script>
+        var socket = io();
+        $(function () {
+            var $composingBox = $('#composing-box');
+
+            $('#post-button').on('click', function () {
+                postMessage();
+            })
+            $composingBox.keypress(function(e) {
+                if(e.which == 13) { //Pressed enter
+                    postMessage();
+                }
+            })
+            
+            socket.on('addMessage', function(data) {
+               console.log(this);
+                $('#messages').append($('<div>').text(data.message).addClass('message'));
+            });
+            function postMessage() {
+                var message = $composingBox.val().trim();
+                if(!message) {
+                    return false;
+                }
+                socket.emit('postMessageToServer', message);
+                $composingBox.val('').focus();
+                return false;
+            }
+            
+        });
+    </script>
