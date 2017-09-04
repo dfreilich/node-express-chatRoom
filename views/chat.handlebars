@@ -1,5 +1,5 @@
     <div id="messages" class="col-md-12 panel panel-body" data-username={{user.username}}></div>
-    <div data-user={{user}} class="composing-area">
+    <div class="composing-area">
     <input id="composing-box">
     </div>
     <div class="panel-footer">
@@ -19,10 +19,22 @@
                 }
             })
             
-            socket.on('addMessage', function(data) {
-               console.log(this);
-                $('#messages').append($('<div>').text(data.username + ': ' + data.message).addClass('message'));
+            socket.on('loadOldMessages', function(docs) {
+                docs.forEach(displayMessages);
             });
+            
+            socket.on('addMessage', function(data) {
+                displayMessages(data);
+            });
+            
+            function displayMessages (data) {
+                $('#messages').append($('<div>').addClass('chat-body clearfix message')
+                .append($('<div>').addClass('')
+                    .append($('<strong>').addClass('primary-font').text(data.username))
+                    .append($('<small>').addClass('pull-right text-muted').text(data.timeStamp)))
+                .append($('<p>').text(data.message)));
+            }
+            
             function postMessage() {
                 var message = $composingBox.val().trim();
                 if(!message) {

@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var uniqueValidator = require('mongoose-unique-validator');
 var bcrypt = require('bcryptjs');
 
 //User Schema
@@ -7,13 +8,18 @@ var ChatUserSchema = mongoose.Schema({
         type: String
     },
     username: {
-        type: String, 
+        type: String,
+        required: true,
+        unique: true,
         index: true
     },
     password: {
-        type:String
+        type:String,
+        required: true
     }
 });
+
+ChatUserSchema.plugin(uniqueValidator);
 
 var User = module.exports = mongoose.model('User', ChatUserSchema);
 

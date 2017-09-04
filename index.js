@@ -64,12 +64,19 @@ app.use(passport.session());
 
 io.on('connection', function(socket) {
     console.log('A user has connected!');
+    var query = Message.find({});
+    query.sort('timeStamp').exec(function (err, docs) {
+        if (err) throw err;
+        console.log('Emitting old messages.');
+        socket.emit('loadOldMessages', docs);
+    });
+    
     socket.on('postMessageToServer', function(data) {
         console.log('Message received in server: ' + data.message + ' from: ' + data.username);
         var newMessage = new Message({username: data.username, message: data.message});
         newMessage.save(function (err) {
             if (err) throw err;
-            io.emit('addMessage', {username: data.username, message: data.message});
+            io.emit('addMessage', {username: data.username, message: data.message, timeStamp: newMessage.timeStamp});
         })
     });
 });

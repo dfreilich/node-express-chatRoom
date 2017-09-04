@@ -1,7 +1,7 @@
 var express = require('express'),
     router = express.Router(),
-//    { check, validationResult } = require('express-validator/check'),
-//    { matchedData } = require('express-validator/filter'),
+    { check, validationResult } = require('express-validator/check'),
+    { matchedData } = require('express-validator/filter'),
     User = require('../models/user'),
     passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
@@ -36,11 +36,22 @@ router.post('/register', function (req, res, next) {
 //        return res.status(422).json({ errors: err.mapped() });
 //    }
     
-    var newUser = new User({name: name, username: username, password: password});
-    User.createUser(newUser, function (err, user) {
-        if (err) {throw err; }
+//    req.checkBody('name', 'Name is required').notEmpty();
+//    req.checkBody('username', 'Username is required').notEmpty();
+//    req.checkBody('password', 'Password is required').notEmpty();
+//    req.checkBody('password2', 'Passwords do not match').equals(password);
+    
+//    var errors = req.validationErrors();
+    
+//    if(errors) {
+//        res.render('register', {errors: errors});
+//    } else {
+        var newUser = new User({name: name, username: username, password: password});
+        User.createUser(newUser, function (err, user) {
+        if (err) throw err;
         console.log(user);
-    });
+        });
+//    }
     
     req.flash('success_msg', 'You have succesfully registered! Login to continue.');
     res.redirect('/users/login');
