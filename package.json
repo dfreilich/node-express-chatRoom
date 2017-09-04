@@ -1,7 +1,7 @@
 {
   "name": "chatroomapp",
   "version": "1.0.0",
-  "description": "Chat Room Application @author: David Freilich @version: 0.0.1",
+  "description": "Chat Room Application",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

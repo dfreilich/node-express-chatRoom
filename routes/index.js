@@ -7,6 +7,7 @@ router.get('/', function(req, res) {
 });
 
 router.get('/chat', ensureAuthenticated, function(req, res) {
+    res.locals.user = req.user;
     res.render('chat')
 });
 

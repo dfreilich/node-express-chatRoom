@@ -6,7 +6,8 @@ var express = require('express'),
     exphd = require('express-handlebars'),
     expressValidator = require('express-validator/check'),
     favicon = require('serve-favicon'),
-    flash = require('connect-flash');
+    flash = require('connect-flash'),
+    Message = require('./models/message'),
     mongo = require('mongodb'),
     mongoose = require('mongoose'),
     path = require('path'),
@@ -16,7 +17,9 @@ var express = require('express'),
     LocalStrategy = require('passport-local').Strategy;
 
 //Setting up db
-mongoose.connect('mongodb://localhost/chatroomapp');
+mongoose.connect('mongodb://localhost/chatroomapp', function (err){
+    if (err) throw err;
+});
 var db = mongoose.connection;
 
 //Setting up server
@@ -59,14 +62,15 @@ app.use(function(req, res, next) {
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-//On Connection
 io.on('connection', function(socket) {
     console.log('A user has connected!');
-    
-    socket.on('postMessageToServer', function(message) {
-        console.log('Message received in server: ' + message);
-       io.emit('addMessage', {message: message, id: socket.id}); 
+    socket.on('postMessageToServer', function(data) {
+        console.log('Message received in server: ' + data.message + ' from: ' + data.username);
+        var newMessage = new Message({username: data.username, message: data.message});
+        newMessage.save(function (err) {
+            if (err) throw err;
+            io.emit('addMessage', {username: data.username, message: data.message});
+        })
     });
 });
 
